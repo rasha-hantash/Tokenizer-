@@ -13,13 +13,13 @@
 #define RIGHT_BRACKET 9
 #define WHILE_KEYWORD 12
 #define RETURN_KEYWORD 13
-#define EQUAL 1
-#define COMMA 2
-#define EOL 7
-#define VARTYPE 17
-#define IDENTIFIER 55
-#define BINOP 22
-#define NUMBER 51
+#define EQUAL 1 // = 
+#define COMMA 2 // ,
+#define EOL 7 
+#define VARTYPE 17 // variable names 
+#define IDENTIFIER 55 //void, int, 
+#define BINOP 22 //* / + - 
+#define NUMBER 51 //77 1 3 
 
 #define LEXEME_MAX 256
 #define MY_CHAR_MAX 256
