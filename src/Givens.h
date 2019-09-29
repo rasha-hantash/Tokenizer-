@@ -16,7 +16,7 @@
 #define EQUAL 1 // = 
 #define COMMA 2 // ,
 #define EOL 7 
-#define VARTYPE 17 // variable names 
+#define VARTYPE 17 // variable names main
 #define IDENTIFIER 55 //void, int, 
 #define BINOP 22 //* / + - 
 #define NUMBER 51 //77 1 3 

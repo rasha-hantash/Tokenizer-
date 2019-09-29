@@ -30,9 +30,9 @@ int main(int argc, char * argv[]){
     //1
     FILE *filePointer;
     char ch;
-    char c;
+    char c[LEXEME_MAX];
     //2
-    filePointer = fopen("src/tokenTest0.txt", "r");
+    filePointer = fopen("src/TokenTests/TokenTests/tokenTest2.txt", "r");
     // filePointer= fopen(argv[1], "r");
     
     int i=0;
@@ -46,14 +46,15 @@ int main(int argc, char * argv[]){
         //figure out why it stores two of everything 
         while ((ch = fgetc(filePointer)) != EOF)
         {
-            // char c = &ch;
-            c = ch;
-            // ?char x = *c;?
-            // printf("%s", ch);
-            if( c == '{' || c == '}' || c =='(' || c == ')' ){
-                printf("%c\n", ch);
+
+            if( ch == '{' || ch == '}' || ch =='(' || ch == ')' || ch == '*' || ch == '+' || ch == '-' || ch == '/'
+                    || ch == '=' || ch == ','){
+                // printf("%c\n", ch);
+                memset(c, 0, LEXEME_MAX);
+                c[0] = ch;
                 switch(ch)
                 {
+                    
                     case '{': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= LEFT_BRACKET;
                                 break;
@@ -66,16 +67,79 @@ int main(int argc, char * argv[]){
                     case ')': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= RIGHT_PARENTHESIS;
                                 break;
+                    case '=': strcpy(lex[i].lexeme, &c);
+                                lex[i].token= RIGHT_PARENTHESIS;
+                                break;
+                    case ',': strcpy(lex[i].lexeme, &c);
+                                lex[i].token= RIGHT_PARENTHESIS;
+                                break;
+                    case '*':
+                    case '/': 
+                    case '+': 
+                    case '-': strcpy(lex[i].lexeme, &c);
+                                lex[i].token= BINOP;
+                                break;
+                    
 
                 }
-                printf("lexeme is %s\n", &lex->lexeme[i]);
+                // printf("lexeme is %s\n", &lex->lexeme[i]);
                 i++;
             }
+            else {
+                c[0]= ch;
+                for(int i = 1; (ch = fgetc(filePointer)) != ' ' && ch != '(' && ch != ')'; i++){
+                    c[i] = ch;
+                    // strcat(&c, &ch);
+                }
+                if(strcmp(c, "int") == 0 || strcmp(c, "void") == 0  ){
+                strcpy(lex[i].lexeme, &c);
+                                lex[i].token= IDENTIFIER;
+                                
+                                memset(c, 0, LEXEME_MAX);
+                         
+                }
+               
+                else {
+                    strcpy(lex[i].lexeme, &c);
+                                lex[i].token= VARTYPE;
+                                memset(c,0, LEXEME_MAX);
+                    if(ch == '('){
+                    i++;
+                    c[0] = ch;
+                    strcpy(lex[i].lexeme, &c);
+                        lex[i].token = LEFT_PARENTHESIS;
+                        
+                    }
+                     if(ch == ')'){
+                    i++;
+                    c[0] = ch;
+                    strcpy(lex[i].lexeme, &c);
+                        lex[i].token = RIGHT_PARENTHESIS;
+                        
+                    }        
+                                
+                }
+                i++;
+                printf("%s", c);
+            }
+    
             
         }
     //5
     }
+    c[0] = ch;
+    strcpy(lex[i].lexeme, &c);
+    lex[i].token= IDENTIFIER;
+    memset(c, 0, LEXEME_MAX);
+                         
+                
+    // add EOF at i+1 
     fclose(filePointer);
+
+    for(int j=0; j<i; j++){
+        printf("This lexic is %d , %s\n", lex[j].token, lex[j].lexeme);
+    }
+
     
 
     return 0;
