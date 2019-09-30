@@ -32,7 +32,7 @@ int main(int argc, char * argv[]){
     char ch;
     char c[LEXEME_MAX];
     //2
-    filePointer = fopen("src/TokenTests/TokenTests/tokenTest2.txt", "r");
+    filePointer = fopen("src/TokenTests/TokenTests/tokenTest4.txt", "r");
     // filePointer= fopen(argv[1], "r");
     
     int i=0;
@@ -57,27 +57,34 @@ int main(int argc, char * argv[]){
                     
                     case '{': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= LEFT_BRACKET;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case '}': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= RIGHT_BRACKET;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case '(':  strcpy(lex[i].lexeme, &c);
                                 lex[i].token= LEFT_PARENTHESIS;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case ')': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= RIGHT_PARENTHESIS;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case '=': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= RIGHT_PARENTHESIS;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case ',': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= RIGHT_PARENTHESIS;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     case '*':
                     case '/': 
                     case '+': 
                     case '-': strcpy(lex[i].lexeme, &c);
                                 lex[i].token= BINOP;
+                                memset(c,0, LEXEME_MAX);
                                 break;
                     
 
@@ -86,12 +93,47 @@ int main(int argc, char * argv[]){
                 i++;
             }
             else {
+                if(ch != ' ')
                 c[0]= ch;
-                for(int i = 1; (ch = fgetc(filePointer)) != ' ' && ch != '(' && ch != ')'; i++){
-                    c[i] = ch;
+                 if(c[0] == '\n' || c[0] == '\t' || c[0] == ';')
+                 {
+                     strcpy(lex[i].lexeme, &c);
+                                lex[i].token= VARTYPE;
+                                memset(c,0, LEXEME_MAX);
+                 } else {
+                for(int j = 1; (ch = fgetc(filePointer)) != ' ' && ch != '(' && ch != ')' && ch != '=' && ch != ','  && ch != ';'; j++){
+                    // if(ch == '\n' || ch == '\t')
+                    // {
+                    //     c[0] = ch;
+                    //     strcpy(lex[i].lexeme, &c);
+                    //             lex[i].token= VARTYPE;
+                    //             memset(c,0, LEXEME_MAX);
+                    //             break;
+                    // }
+                    if(c[0] == '\000')
+                    {
+                        c[0] = ch;
+                        if(ch == ';' || ch == '\n'){
+                            strcpy(lex[i].lexeme, &c);
+                                lex[i].token= VARTYPE;
+                                memset(c,0, LEXEME_MAX);
+                                j=1;
+                        }
+                    }
+                    else {
+                        if(c[1] == '\000'){
+                            c[1] = ch;
+                            j=1;
+                        }else {
+                        c[j] = ch;
+                        }
+                    }
+                    if(isdigit(ch))
+                    break;
+                   
                     // strcat(&c, &ch);
-                }
-                if(strcmp(c, "int") == 0 || strcmp(c, "void") == 0  ){
+                } 
+                if(strcmp(c, "int") == 0 || strcmp(c, "void") == 0 || strcmp(c, "return") == 0){
                 strcpy(lex[i].lexeme, &c);
                                 lex[i].token= IDENTIFIER;
                                 
@@ -99,7 +141,7 @@ int main(int argc, char * argv[]){
                          
                 }
                
-                else {
+                else if(c[0] != '\000'){
                     strcpy(lex[i].lexeme, &c);
                                 lex[i].token= VARTYPE;
                                 memset(c,0, LEXEME_MAX);
@@ -112,15 +154,48 @@ int main(int argc, char * argv[]){
                     }
                      if(ch == ')'){
                     i++;
+                    if(ch != ' ')
                     c[0] = ch;
                     strcpy(lex[i].lexeme, &c);
                         lex[i].token = RIGHT_PARENTHESIS;
                         
-                    }        
+                    }  
+                     if(ch == '='){
+                    i++;
+                    if(ch != ' ')
+                    c[0] = ch;
+                    strcpy(lex[i].lexeme, &c);
+                        lex[i].token = EQUAL;
+                        
+                    }
+                    if(ch == ','){
+                    i++;
+                    if(ch != ' ')
+                    c[0] = ch;
+                    strcpy(lex[i].lexeme, &c);
+                                lex[i].token= COMMA;
+                                memset(c, 0, LEXEME_MAX);
+                    }
+                    if(ch == ';'){
+                    i++;
+                    if(ch != ' ')
+                    c[0] = ch;
+                    strcpy(lex[i].lexeme, &c);
+                                lex[i].token= COMMA;
+                                memset(c, 0, LEXEME_MAX);
+                    }
+                    if(isdigit(ch) && c[0] != '\000'){
+                        //i++
+                         strcpy(lex[i].lexeme, &c);
+                                lex[i].token= VARTYPE;
+                                memset(c,0, LEXEME_MAX);
+                    }              
                                 
+                }
                 }
                 i++;
                 printf("%s", c);
+            
             }
     
             
@@ -129,13 +204,14 @@ int main(int argc, char * argv[]){
     }
     c[0] = ch;
     strcpy(lex[i].lexeme, &c);
-    lex[i].token= IDENTIFIER;
+    lex[i].token= EOL;
     memset(c, 0, LEXEME_MAX);
                          
-                
+              
     // add EOF at i+1 
     fclose(filePointer);
-
+    // How should escape characters be displayed as? 
+    // Do you want each digit to be its own lexeme? 
     for(int j=0; j<i; j++){
         printf("This lexic is %d , %s\n", lex[j].token, lex[j].lexeme);
     }
